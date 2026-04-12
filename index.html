@@ -2,34 +2,49 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <title>Open Steam</title>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const appid = params.get("appid");
-    const mode = params.get("mode") || "store"; // store | run
+    function getAppId() {
+      const params = new URLSearchParams(window.location.search);
 
-    if (appid) {
-      window.onload = () => {
-        window.location.href = `steam://${mode}/${appid}`;
-      };
+      const directAppId = params.get("appid");
+      if (directAppId) return directAppId;
+
+      const steamUrl = params.get("url");
+      if (!steamUrl) return null;
+
+      const match = steamUrl.match(/store\.steampowered\.com\/app\/(\d+)/i);
+      return match ? match[1] : null;
     }
+
+    function getMode() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("mode") || "store";
+    }
+
+    window.onload = () => {
+      const appid = getAppId();
+      const mode = getMode();
+      const status = document.getElementById("status");
+      const link = document.getElementById("link");
+
+      if (!appid) {
+        status.textContent = "No valid Steam App ID or store URL found.";
+        link.style.display = "none";
+        return;
+      }
+
+      const steamLink = `steam://${mode}/${appid}`;
+      status.textContent = `Opening App ID ${appid} in Steam...`;
+      link.href = steamLink;
+      link.style.display = "inline";
+
+      window.location.href = steamLink;
+    };
   </script>
 </head>
 <body>
-  <h3 id="status">Opening Steam...</h3>
-  <a id="link">Click here if nothing happens</a>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const appid = params.get("appid");
-    const mode = params.get("mode") || "store";
-
-    if (appid) {
-      const steamLink = `steam://${mode}/${appid}`;
-      document.getElementById("link").href = steamLink;
-      document.getElementById("status").innerText = `Opening AppID ${appid} in Steam...`;
-    } else {
-      document.getElementById("status").innerText = "Missing appid in URL";
-    }
-  </script>
+  <h3 id="status">Processing Steam link...</h3>
+  <a id="link" href="#" style="display:none;">Click here if nothing happens</a>
 </body>
 </html>
