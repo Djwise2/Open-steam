@@ -9,11 +9,9 @@
       const match = fullUrl.match(/\/app\/(\d+)/i);
 
       const status = document.getElementById("status");
-      const link = document.getElementById("link");
 
       if (!match) {
         status.textContent = "No valid Steam App ID found.";
-        link.style.display = "none";
         return;
       }
 
@@ -21,15 +19,20 @@
       const steamLink = `steam://store/${appid}`;
 
       status.textContent = `Opening App ID ${appid} in Steam...`;
-      link.href = steamLink;
-      link.style.display = "inline";
 
+      // Launch Steam
       window.location.href = steamLink;
+
+      // Try to close the tab after a short delay
+      setTimeout(() => {
+        window.open('', '_self');
+        window.close();
+      }, 1200);
     };
   </script>
 </head>
 <body>
-  <h3 id="status">Processing Steam link...</h3>
-  <a id="link" href="#" style="display:none;">Click here if nothing happens</a>
+  <h3 id="status">Opening Steam...</h3>
+  <p>If this tab does not close automatically, you can close it.</p>
 </body>
 </html>
