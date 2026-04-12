@@ -4,42 +4,22 @@
   <meta charset="UTF-8">
   <title>Open Steam</title>
   <script>
-    function extractAppId(text) {
-      if (!text) return null;
-      const match = text.match(/\/app\/(\d+)/i);
-      return match ? match[1] : null;
-    }
-
-    function getAppId() {
-      const params = new URLSearchParams(window.location.search);
-
-      const appid = params.get("appid");
-      if (appid) return appid;
-
-      const url = params.get("url");
-      if (url) return extractAppId(url);
-
-      const hash = window.location.hash;
-      if (hash && hash.length > 1) {
-        const raw = decodeURIComponent(hash.substring(1));
-        return extractAppId(raw);
-      }
-
-      return null;
-    }
-
     window.onload = function () {
-      const appid = getAppId();
+      const fullUrl = window.location.href;
+      const match = fullUrl.match(/\/app\/(\d+)/i);
+
       const status = document.getElementById("status");
       const link = document.getElementById("link");
 
-      if (!appid) {
-        status.textContent = "No valid Steam App ID or store URL found.";
+      if (!match) {
+        status.textContent = "No valid Steam App ID found.";
         link.style.display = "none";
         return;
       }
 
+      const appid = match[1];
       const steamLink = `steam://store/${appid}`;
+
       status.textContent = `Opening App ID ${appid} in Steam...`;
       link.href = steamLink;
       link.style.display = "inline";
