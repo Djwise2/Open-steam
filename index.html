@@ -3,10 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <script>
-    window.onload = () => location.href = "steam://store/2646460";
+    const params = new URLSearchParams(window.location.search);
+    const appid = params.get("appid");
+    const mode = params.get("mode") || "store"; // store | run
+
+    if (appid) {
+      window.onload = () => {
+        window.location.href = `steam://${mode}/${appid}`;
+      };
+    }
   </script>
 </head>
 <body>
-  <a href="steam://store/2646460">Open in Steam</a>
+  <h3 id="status">Opening Steam...</h3>
+  <a id="link">Click here if nothing happens</a>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const appid = params.get("appid");
+    const mode = params.get("mode") || "store";
+
+    if (appid) {
+      const steamLink = `steam://${mode}/${appid}`;
+      document.getElementById("link").href = steamLink;
+      document.getElementById("status").innerText = `Opening AppID ${appid} in Steam...`;
+    } else {
+      document.getElementById("status").innerText = "Missing appid in URL";
+    }
+  </script>
 </body>
 </html>
