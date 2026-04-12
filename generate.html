@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Steam Link Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #444;
+    }
+
+    input, button, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 16px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+  </style>
+</head>
+<body>
+  <h2>Steam Discord Link Generator</h2>
+  <p>Paste a Steam store URL below and generate your Discord-ready Steam launcher link.</p>
+
+  <input
+    id="steamUrl"
+    type="text"
+    placeholder="Paste Steam store URL here"
+  />
+
+  <button onclick="generateLink()">Generate Link</button>
+
+  <textarea
+    id="output"
+    placeholder="Your generated link will appear here"
+    readonly
+  ></textarea>
+
+  <button onclick="copyLink()">Copy Generated Link</button>
+
+  <script>
+    function generateLink() {
+      const input = document.getElementById("steamUrl").value.trim();
+      const output = document.getElementById("output");
+
+      if (!input) {
+        output.value = "Paste a Steam URL first.";
+        return;
+      }
+
+      const match = input.match(/store\.steampowered\.com\/app\/\d+/i);
+
+      if (!match) {
+        output.value = "That does not look like a valid Steam store game URL.";
+        return;
+      }
+
+      const finalLink = "https://djwise2.github.io/Open-steam/#" + input;
+      output.value = finalLink;
+    }
+
+    function copyLink() {
+      const output = document.getElementById("output");
+
+      if (!output.value) return;
+
+      output.select();
+      output.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+    }
+  </script>
+</body>
+</html>
