@@ -1,32 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Open Steam</title>
   <script>
     window.onload = function () {
-      const fullUrl = window.location.href;
-      const match = fullUrl.match(/\/app\/(\d+)/i);
-
-      const status = document.getElementById("status");
-
-      if (!match) {
-        status.textContent = "No valid Steam App ID found.";
-        return;
-      }
-
-      const appid = match[1];
-      const steamLink = `steam://store/${appid}`;
-
-      status.textContent = `Opening App ID ${appid} in Steam...`;<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Open Steam</title>
-  <script>
-    window.onload = function () {
-      const fullUrl = window.location.href;
       const params = new URLSearchParams(window.location.search);
+      const fullUrl = window.location.href;
 
       const status = document.getElementById("status");
       const message = document.getElementById("message");
@@ -35,11 +16,11 @@
       let appid = null;
       let mode = params.get("mode") || "store";
 
-      // First: support ?appid=12345
+      // Support ?appid=12345
       if (params.get("appid")) {
         appid = params.get("appid");
       } else {
-        // Fallback: support #https://store.steampowered.com/app/12345/Game_Name/
+        // Support #https://store.steampowered.com/app/12345/Game_Name/
         const match = fullUrl.match(/\/app\/(\d+)/i);
         if (match) {
           appid = match[1];
@@ -55,32 +36,17 @@
 
       const steamLink = `steam://${mode}/${appid}`;
 
-      status.textContent = mode === "run"
-        ? `Launching App ID ${appid} in Steam...`
-        : `Opening App ID ${appid} in Steam...`;
+      if (mode === "run") {
+        status.textContent = `Launching App ID ${appid} in Steam...`;
+        link.textContent = "Launch manually";
+      } else {
+        status.textContent = `Opening App ID ${appid} in Steam...`;
+        link.textContent = "Open manually";
+      }
 
       message.textContent = "If this tab does not close automatically, you can close it.";
       link.href = steamLink;
-      link.textContent = mode === "run" ? "Launch manually" : "Open manually";
       link.style.display = "inline";
-
-      // Launch Steam
-      window.location.href = steamLink;
-
-      // Try to close tab after short delay
-      setTimeout(() => {
-        window.open('', '_self');
-        window.close();
-      }, 1200);
-    };
-  </script>
-</head>
-<body>
-  <h3 id="status">Processing Steam link...</h3>
-  <p id="message"></p>
-  <a id="link" href="#" style="display:none;">Open manually</a>
-</body>
-</html>
 
       // Launch Steam
       window.location.href = steamLink;
@@ -94,7 +60,8 @@
   </script>
 </head>
 <body>
-  <h3 id="status">Opening Steam...</h3>
-  <p>If this tab does not close automatically, you can close it.</p>
+  <h3 id="status">Processing Steam link...</h3>
+  <p id="message"></p>
+  <a id="link" href="#" style="display:none;">Open manually</a>
 </body>
 </html>
