@@ -75,18 +75,20 @@
         return;
       }
 
-      cconst finalLink = "https://djwise2.github.io/Open-steam/?v=2#" + input;
+      const finalLink = "https://djwise2.github.io/Open-steam/?v=2#" + input;
       output.value = finalLink;
     }
 
-    function copyLink() {
-      const output = document.getElementById("output");
+    async function copyLink() {
+      const output = document.getElementById("output").value;
+      if (!output) return;
 
-      if (!output.value) return;
-
-      output.select();
-      output.setSelectionRange(0, 99999);
-      document.execCommand("copy");
+      try {
+        await navigator.clipboard.writeText(output);
+        alert("Copied to clipboard");
+      } catch (err) {
+        alert("Copy failed. Manually copy the link.");
+      }
     }
   </script>
 </body>
