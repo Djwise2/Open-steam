@@ -1,38 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Open Steam</title>
   <script>
     window.onload = function () {
+      const params = new URLSearchParams(window.location.search);
       const fullUrl = window.location.href;
-      const match = fullUrl.match(/\/app\/(\d+)/i);
 
       const status = document.getElementById("status");
+      const message = document.getElementById("message");
+      const link = document.getElementById("link");
 
-      if (!match) {
+      let appid = null;
+      let mode = params.get("mode") || "store";
+
+      if (params.get("appid")) {
+        appid = params.get("appid");
+      } else {
+        const match = fullUrl.match(/\/app\/(\d+)/i);
+        if (match) {
+          appid = match[1];
+        }
+      }
+
+      if (!appid) {
         status.textContent = "No valid Steam App ID found.";
+        message.textContent = "You can close this tab.";
+        link.style.display = "none";
         return;
       }
 
-      const appid = match[1];
-      const steamLink = `steam://store/${appid}`;
+      const steamLink = `steam://${mode}/${appid}`;
 
-      status.textContent = `Opening App ID ${appid} in Steam...`;
+      if (mode === "run") {
+        status.textContent = `Launching App ID ${appid} in Steam...`;
+        link.textContent = "Launch manually";
+      } else {
+        status.textContent = `Opening App ID ${appid} in Steam...`;
+        link.textContent = "Open manually";
+      }
 
-      // Launch Steam
+      message.textContent = "If your browser asks, click “Open Steam”. If nothing happens, use the button below.";
+      link.href = steamLink;
+      link.style.display = "inline";
+
       window.location.href = steamLink;
-
-      // Try to close the tab after a short delay
-      setTimeout(() => {
-        window.open('', '_self');
-        window.close();
-      }, 1200);
     };
   </script>
 </head>
 <body>
-  <h3 id="status">Opening Steam...</h3>
-  <p>If this tab does not close automatically, you can close it.</p>
+  <h3 id="status">Processing Steam link...</h3>
+  <p id="message"></p>
+  <p><a id="link" href="#" style="display:none;">Open manually</a></p>
 </body>
 </html>
